@@ -1,0 +1,1 @@
+python -m gunicorn -w 4 src.index:app

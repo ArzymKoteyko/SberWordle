@@ -1,0 +1,51 @@
+@import './fonts.scss';
+
+.Game {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    .Puzzle {
+        input {
+            border: 1px solid black;
+            border-radius: calc($font-size * 0.125);
+            margin: 0;
+            padding: 0;
+            font-size: $font-size;
+            width: calc($font-size * 1.25);
+            height: calc($font-size * 1.8);
+            text-align: center;
+            margin: calc($font-size * 0.125);
+            caret-color: transparent;
+        }
+    }
+    .Keyboard {
+        display: flex;
+        flex-direction: column;
+        .key-row {
+            display: flex;
+            flex-direction: row;
+        }
+        .key-row:nth-of-type(2) {
+            margin-left: calc($font-size * 0.75);
+        }
+        .key-row:nth-of-type(3) {
+            margin-left: calc($font-size * 2.25);
+        }
+        .key {
+            display: flex;
+            justify-content: center;
+            align-items: center;    
+            border: 1px solid black;
+            border-radius: calc($font-size * 0.125);
+            width: calc($font-size * 1.25);
+            height: calc($font-size * 1.8);
+            margin: calc($font-size * 0.125);
+            p {
+                font-size: $font-size;
+                text-align: center;
+                vertical-align: middle;
+            }
+        }
+    }
+}
