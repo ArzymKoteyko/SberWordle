@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { ReactElement } from "react";
 import Confetti from 'react-confetti'
 import "../../css/game.scss"
 
@@ -50,6 +50,18 @@ class Word extends React.Component<WordProps, WordState> {
             this.onGuess(newWord)
         }
         this.setState({word: newWord})
+    }
+
+    emptyWord = () => {
+        for (let letter of this.letters) {
+            letter.current.value = '';
+            letter.current.style.backgroundColor = 'rgba(0,0,0,0)'
+            letter.current.style.borderColor ='white'
+        }
+        this.setState({
+            word: '',
+            pointer: 0
+        })
     }
 
     updateLetters = (lettersStates) => {
@@ -150,7 +162,7 @@ const KeyboardCharacters = [
 ]
 
 type Props = {}
-type State = {goal, pointer, isWin}
+type State = {goal, pointer, isWin, score}
 export class Game extends React.Component<Props, State> {
     words
     absentCharacters: Array<String> = []
@@ -163,7 +175,7 @@ export class Game extends React.Component<Props, State> {
             goal: 'coder',
             pointer: 0,
             isWin: false,
-            
+            score: 0,
         }
         this.words = Array.apply(null, {length: 6}).map(() => {return React.createRef()})
         this.characters = {
@@ -212,36 +224,39 @@ export class Game extends React.Component<Props, State> {
     handleGuess = (word) => {
         let goal = this.state.goal;
         let lettersStates : Array<Number> = [] 
+        let guessScore = 0
         for (let i = 0; i < goal.length; i++) {
             console.log(word[i].toUpperCase()); 
             if (goal[i] == word[i]) {
                 lettersStates.push(Letter.INPLACE);
                 this.inplaceCharacters.push(word[i]);
                 this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorSuccessTransparent;
-                this.characters[word[i].toUpperCase()].current.style.borderColor = colorSuccess;  
+                this.characters[word[i].toUpperCase()].current.style.borderColor = colorSuccess; 
+                guessScore += 100
             }
             else if (goal.includes(word[i])) {
                 lettersStates.push(Letter.PRESENT);
                 this.presentCharacters.push(word[i]);
                 this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorWarningTransparent;
                 this.characters[word[i].toUpperCase()].current.style.borderColor = colorWarning;
+                guessScore += 25
             }
             else {
                 lettersStates.push(Letter.ABSENT);
                 this.absentCharacters.push(word[i]);
                 this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorCriticalTransparent;
                 this.characters[word[i].toUpperCase()].current.style.borderColor = colorCritical;
+                guessScore += 5
             }
         }
+        
         console.log(word);
         console.log(lettersStates);
         this.words[this.state.pointer].current.disableInput()
         this.words[this.state.pointer].current.updateLetters(lettersStates)
         if (word === goal) {
             console.log('You win')
-            this.setState({
-                isWin: true,
-            })
+            guessScore += 500
         }
         else {
             this.words[this.state.pointer+1].current.enableInput()
@@ -250,11 +265,29 @@ export class Game extends React.Component<Props, State> {
                 pointer: this.state.pointer+1,
             })
         }
+        this.setState({ 
+            score: this.state.score + guessScore,
+        });
     }
 
     handleKeyClick = (key, event) => {
         console.log(key)
         this.words[this.state.pointer].current.inputLetter(key)
+    }
+
+    restart = () => {
+        for (let word of this.words) {
+            word.current.emptyWord();
+        }
+        for (let key of Object.keys(this.characters)) {
+            this.characters[key].current.style.backgroundColor = 'rgba(0,0,0,0)'
+            this.characters[key].current.style.borderColor ='white'
+        }
+        this.setState({ 
+            pointer: 0,
+            goal: wordsList[Math.floor(Math.random()*wordsList.length)],
+        })
+        console.log('restart')
     }
 
     render(): React.ReactNode { return(<>
@@ -263,6 +296,12 @@ export class Game extends React.Component<Props, State> {
                 if (this.state.isWin) return <Confetti/>
                 else return <></>
             })()}
+            <div className="Menu">
+                <div className="restart" onClick={this.restart}></div>
+            </div>
+            <div className="Score">
+                <h1>{this.state.score}</h1>
+            </div>
             <div className="Puzzle">
                 {this.words.map((ref, idx) => {
                     return <Word
