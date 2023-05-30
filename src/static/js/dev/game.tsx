@@ -283,6 +283,8 @@ export class Game extends React.Component<Props, State> {
             this.characters[key].current.style.backgroundColor = 'rgba(0,0,0,0)'
             this.characters[key].current.style.borderColor ='white'
         }
+        this.words[0].current.enableInput()
+        this.words[0].current.letters[0].current.focus()
         this.setState({ 
             pointer: 0,
             goal: wordsList[Math.floor(Math.random()*wordsList.length)],
