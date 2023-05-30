@@ -133,9 +133,9 @@ const Letter = {
 }
 
 const KeyboardCharacters = [
-    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['Z', 'X', 'C', 'V', 'B', 'N', 'M']
+    ['Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', 'Щ', 'З', 'Х', 'Ъ' ],
+    ['Ф', 'Ы', 'В', 'А', 'П', 'Р', 'О', 'Л', 'Д', 'Ж', 'Э'],
+    ['Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', 'Ю']
 ]
 
 type Props = {}
@@ -155,32 +155,38 @@ export class Game extends React.Component<Props, State> {
         }
         this.words = Array.apply(null, {length: 6}).map(() => {return React.createRef()})
         this.characters = {
-            'A': React.createRef(),
-            'B': React.createRef(),
-            'C': React.createRef(),
-            'D': React.createRef(),
-            'E': React.createRef(),
-            'F': React.createRef(),
-            'G': React.createRef(),
-            'H': React.createRef(),
-            'I': React.createRef(),
-            'J': React.createRef(),
-            'K': React.createRef(),
-            'L': React.createRef(),
-            'M': React.createRef(),
-            'N': React.createRef(),
-            'O': React.createRef(),
-            'P': React.createRef(),
-            'Q': React.createRef(),
-            'R': React.createRef(),
-            'S': React.createRef(),
-            'T': React.createRef(),
-            'U': React.createRef(),
-            'V': React.createRef(),
-            'W': React.createRef(),
-            'X': React.createRef(),
-            'Y': React.createRef(),
-            'Z': React.createRef(),
+            'А': React.createRef(),
+            'Б': React.createRef(),
+            'В': React.createRef(),
+            'Г': React.createRef(),
+            'Д': React.createRef(),
+            'Е': React.createRef(),
+            'Ж': React.createRef(),
+            'З': React.createRef(),
+            'И': React.createRef(),
+            'Й': React.createRef(),
+            'К': React.createRef(),
+            'Л': React.createRef(),
+            'М': React.createRef(),
+            'Н': React.createRef(),
+            'О': React.createRef(),
+            'П': React.createRef(),
+            'Р': React.createRef(),
+            'С': React.createRef(),
+            'Т': React.createRef(),
+            'У': React.createRef(),
+            'Ф': React.createRef(),
+            'Х': React.createRef(),
+            'Ц': React.createRef(),
+            'Ч': React.createRef(),
+            'Ш': React.createRef(),
+            'Щ': React.createRef(),
+            'Ъ': React.createRef(),
+            'Ы': React.createRef(),
+            'Ь': React.createRef(),
+            'Э': React.createRef(),
+            'Ю': React.createRef(),
+            'Я': React.createRef(),
         }
     }
 
@@ -195,9 +201,11 @@ export class Game extends React.Component<Props, State> {
         let goal = this.state.goal;
         let lettersStates : Array<Number> = [] 
         for (let i = 0; i < goal.length; i++) {
+            console.log(word[i].toUpperCase()); 
             if (goal[i] == word[i]) {
                 lettersStates.push(Letter.INPLACE);
                 this.inplaceCharacters.push(word[i]);
+                  
                 this.characters[word[i].toUpperCase()].current.style.backgroundColor = 'green';
             }
             else if (goal.includes(word[i])) {
