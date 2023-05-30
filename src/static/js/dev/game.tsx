@@ -2,6 +2,13 @@
 import React from "react";
 import "../../css/game.scss"
 
+const colorSuccess = '#12A557'
+const colorSuccessTransparent = 'rgba(18, 165, 87, 0.3)'
+const colorWarning = '#EF6B25'
+const colorWarningTransparent = 'rgba(239, 107, 37, 0.3)'
+const colorCritical = '#DC283A'
+const colorCriticalTransparent = 'rgba(220, 40, 58, 0.3)'
+
 import {wordsList} from './words_list'
 
 
@@ -48,13 +55,16 @@ class Word extends React.Component<WordProps, WordState> {
         for (let idx = 0; idx < this.letters.length; idx++) { 
             switch (lettersStates[idx]) {
                 case Letter.ABSENT:
-                    this.letters[idx].current.style.backgroundColor = 'red'
+                    this.letters[idx].current.style.backgroundColor = colorCriticalTransparent
+                    this.letters[idx].current.style.borderColor = colorCritical
                     break
                 case Letter.PRESENT:
-                    this.letters[idx].current.style.backgroundColor = 'orange'
+                    this.letters[idx].current.style.backgroundColor = colorWarningTransparent
+                    this.letters[idx].current.style.borderColor = colorWarning
                     break
                 case Letter.INPLACE:
-                    this.letters[idx].current.style.backgroundColor = 'green'
+                    this.letters[idx].current.style.backgroundColor = colorSuccessTransparent
+                    this.letters[idx].current.style.borderColor = colorSuccess
                     break
             }
         }
@@ -205,18 +215,20 @@ export class Game extends React.Component<Props, State> {
             if (goal[i] == word[i]) {
                 lettersStates.push(Letter.INPLACE);
                 this.inplaceCharacters.push(word[i]);
-                  
-                this.characters[word[i].toUpperCase()].current.style.backgroundColor = 'green';
+                this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorSuccessTransparent;
+                this.characters[word[i].toUpperCase()].current.style.borderColor = colorSuccess;  
             }
             else if (goal.includes(word[i])) {
                 lettersStates.push(Letter.PRESENT);
                 this.presentCharacters.push(word[i]);
-                this.characters[word[i].toUpperCase()].current.style.backgroundColor = 'orange';
+                this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorWarningTransparent;
+                this.characters[word[i].toUpperCase()].current.style.borderColor = colorWarning;
             }
             else {
                 lettersStates.push(Letter.ABSENT);
                 this.absentCharacters.push(word[i]);
-                this.characters[word[i].toUpperCase()].current.style.backgroundColor = 'red';
+                this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorCriticalTransparent;
+                this.characters[word[i].toUpperCase()].current.style.borderColor = colorCritical;
             }
         }
         console.log(word);
