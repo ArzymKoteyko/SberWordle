@@ -1,4 +1,4 @@
-#!/home/Arzym/Sandbox/Wordle/venv/bin/python
+#!/root/Sandbox/SberWordle/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
