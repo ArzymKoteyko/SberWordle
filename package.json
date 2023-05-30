@@ -29,6 +29,7 @@
         "webpack-cli": "^5.0.1"
     },
     "dependencies": {
+        "react-confetti": "^6.1.0",
         "sass": "^1.62.1",
         "sass-loader": "^13.3.0"
     }

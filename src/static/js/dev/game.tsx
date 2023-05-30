@@ -1,5 +1,6 @@
 
 import React from "react";
+import Confetti from 'react-confetti'
 import "../../css/game.scss"
 
 const colorSuccess = '#12A557'
@@ -149,7 +150,7 @@ const KeyboardCharacters = [
 ]
 
 type Props = {}
-type State = {goal, pointer}
+type State = {goal, pointer, isWin}
 export class Game extends React.Component<Props, State> {
     words
     absentCharacters: Array<String> = []
@@ -161,6 +162,7 @@ export class Game extends React.Component<Props, State> {
         this.state = {
             goal: 'coder',
             pointer: 0,
+            isWin: false,
             
         }
         this.words = Array.apply(null, {length: 6}).map(() => {return React.createRef()})
@@ -237,6 +239,9 @@ export class Game extends React.Component<Props, State> {
         this.words[this.state.pointer].current.updateLetters(lettersStates)
         if (word === goal) {
             console.log('You win')
+            this.setState({
+                isWin: true,
+            })
         }
         else {
             this.words[this.state.pointer+1].current.enableInput()
@@ -254,6 +259,10 @@ export class Game extends React.Component<Props, State> {
 
     render(): React.ReactNode { return(<>
         <div className="Game">
+            {(() => {
+                if (this.state.isWin) return <Confetti/>
+                else return <></>
+            })()}
             <div className="Puzzle">
                 {this.words.map((ref, idx) => {
                     return <Word
