@@ -10,6 +10,23 @@ const colorWarningTransparent = 'rgba(239, 107, 37, 0.3)'
 const colorCritical = '#DC283A'
 const colorCriticalTransparent = 'rgba(220, 40, 58, 0.3)'
 
+const shakeAnimation = [
+    {transform: 'translate3d(-1px, 0, 0)'},  // 1
+    {transform: 'translate3d(2px, 0, 0)'},   // 2
+    {transform: 'translate3d(-4px, 0, 0)'},  // 3
+    {transform: 'translate3d(4px, 0, 0)'},   // 4
+    {transform: 'translate3d(-4px, 0, 0)'},  // 3
+    {transform: 'translate3d(4px, 0, 0)'},   // 4
+    {transform: 'translate3d(-4px, 0, 0)'},  // 3
+    {transform: 'translate3d(2px, 0, 0)'},   // 2
+    {transform: 'translate3d(-1px, 0, 0)'},  // 1
+
+    // 1 {transform: 'translate3d(-1px, 0, 0)'},
+    // 2 {transform: 'translate3d(2px, 0, 0)'},
+    // 3 {transform: 'translate3d(-4px, 0, 0)'},
+    // 4 {transform: 'translate3d(4px, 0, 0)'}
+]
+
 import {wordsList} from './words_list'
 
 
@@ -46,10 +63,26 @@ class Word extends React.Component<WordProps, WordState> {
 
     updateWord = () => {
         let newWord = this.letters.map((letter) => {return letter.current.value}).join('')
+        /*
         if (newWord.length == 5) {
             this.onGuess(newWord)
         }
+        */
         this.setState({word: newWord})
+    }
+
+    enterWord = () => {
+        if (this.state.word.length == 5) {
+            this.onGuess(this.state.word)
+        }
+        else {
+            for (let letter of this.letters) {
+                letter.current.animate(
+                    shakeAnimation,
+                    {duration: 500, iterations: 1}
+                )
+            }
+        }
     }
 
     emptyWord = () => {
@@ -84,7 +117,6 @@ class Word extends React.Component<WordProps, WordState> {
     }
 
     inputLetter = (letter) => {
-        console.log(this.letters[this.state.pointer].current.value)
         if (this.letters[this.state.pointer].current.value === '') {
             this.letters[this.state.pointer].current.value = letter.toLowerCase()
             this.letters[this.state.pointer].current.focus()
@@ -93,6 +125,19 @@ class Word extends React.Component<WordProps, WordState> {
             this.letters[this.state.pointer+1].current.value = letter.toLowerCase()
         }
         this.updateWord()
+    }
+
+    removeLetter = () => {
+        if (this.letters.length > 0) {
+            this.letters[this.state.pointer].current.value = ''
+            if (this.state.pointer != 0) {
+                this.letters[this.state.pointer-1].current.focus()
+                this.setState({pointer: this.state.pointer-1})
+            }
+            else {
+                this.letters[this.state.pointer].current.focus()
+            }
+        }
     }
 
     movePointerRight = (dst=1) => {
@@ -220,6 +265,11 @@ export class Game extends React.Component<Props, State> {
         this.setState({
             goal: wordsList[Math.floor(Math.random()*wordsList.length)],
         })
+        addEventListener("keydown", (event) => {
+            if (event.isComposing || event.code === 'Enter') {
+                this.words[this.state.pointer].current.enterWord()
+            }
+        })
     }
 
     handleGuess = (word) => {
@@ -228,7 +278,6 @@ export class Game extends React.Component<Props, State> {
         let guessScore = 0
         if (Object.values(wordsList).includes(word)) {
             for (let i = 0; i < goal.length; i++) {
-                console.log(word[i].toUpperCase()); 
                 if (goal[i] == word[i]) {
                     lettersStates.push(Letter.INPLACE);
                     this.inplaceCharacters.push(word[i]);
@@ -252,12 +301,9 @@ export class Game extends React.Component<Props, State> {
                 }
             }
             
-            console.log(word);
-            console.log(lettersStates);
             this.words[this.state.pointer].current.disableInput()
             this.words[this.state.pointer].current.updateLetters(lettersStates)
             if (word === goal) {
-                console.log('You win')
                 this.setState({ 
                     isWin: true,
                     isConfetti: true
@@ -277,7 +323,7 @@ export class Game extends React.Component<Props, State> {
                 })
             }
             
-            console.log(guessScore)
+
             let prevScore = this.state.score
             for (let i=0; i<guessScore; i++) {
                 setTimeout(() => {
@@ -290,26 +336,10 @@ export class Game extends React.Component<Props, State> {
         }
         else {
             for (let letter of this.words[this.state.pointer].current.letters) {
-                letter.current.animate([
-                    {transform: 'translate3d(-1px, 0, 0)'},  // 1
-                    {transform: 'translate3d(2px, 0, 0)'},   // 2
-                    {transform: 'translate3d(-4px, 0, 0)'},  // 3
-                    {transform: 'translate3d(4px, 0, 0)'},   // 4
-                    {transform: 'translate3d(-4px, 0, 0)'},  // 3
-                    {transform: 'translate3d(4px, 0, 0)'},   // 4
-                    {transform: 'translate3d(-4px, 0, 0)'},  // 3
-                    {transform: 'translate3d(2px, 0, 0)'},   // 2
-                    {transform: 'translate3d(-1px, 0, 0)'},  // 1
-
-                    // 1 {transform: 'translate3d(-1px, 0, 0)'},
-                    // 2 {transform: 'translate3d(2px, 0, 0)'},
-                    // 3 {transform: 'translate3d(-4px, 0, 0)'},
-                    // 4 {transform: 'translate3d(4px, 0, 0)'}
-                ],
-                {
-                    duration: 500,
-                    iterations: 1
-                })
+                letter.current.animate(
+                    shakeAnimation,
+                    {duration: 500, iterations: 1}
+                )
             }
             setTimeout(() => {
                 this.words[this.state.pointer].current.emptyWord()
@@ -319,7 +349,6 @@ export class Game extends React.Component<Props, State> {
     }
 
     handleKeyClick = (key, event) => {
-        console.log(key)
         this.words[this.state.pointer].current.inputLetter(key)
     }
 
@@ -339,7 +368,6 @@ export class Game extends React.Component<Props, State> {
             goal: wordsList[Math.floor(Math.random()*wordsList.length)],
             isWin: false
         })
-        console.log('restart')
     }
 
     render(): React.ReactNode { return(<>
@@ -364,6 +392,21 @@ export class Game extends React.Component<Props, State> {
             </div>
             <div className="Keyboard">
                 {KeyboardCharacters.map((row, idx) => { 
+                    if (idx === 2) {
+                        return (<div key={idx} className="key-row">
+                            <div key={'enter'} className="key enter" onClick={() => this.words[this.state.pointer].current.enterWord()}></div>
+                            {row.map((key, idx) => {
+                                return <div 
+                                    key={idx} 
+                                    ref={this.characters[key]}
+                                    onClick={(event) => this.handleKeyClick(key, event)} 
+                                    className="key">
+                                    <p>{key}</p>
+                                </div>
+                            })}
+                            <div key={'delete'} className="key delete" onClick={() => this.words[this.state.pointer].current.removeLetter()}></div>
+                        </div>)
+                    }
                     return (<div key={idx} className="key-row">{
                         row.map((key, idx) => {
                             return <div 
@@ -374,7 +417,7 @@ export class Game extends React.Component<Props, State> {
                                 <p>{key}</p>
                             </div>
                         })
-                    }</div>) 
+                    }</div>)
                 })}
             </div>
         </div>

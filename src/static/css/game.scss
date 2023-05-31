@@ -60,12 +60,7 @@
         .key-row {
             display: flex;
             flex-direction: row;
-        }
-        .key-row:nth-of-type(2) {
-            margin-left: calc($font-size * 0.75);
-        }
-        .key-row:nth-of-type(3) {
-            margin-left: calc($font-size * 2.25);
+            justify-content: center;
         }
         .key {
             display: flex;
@@ -83,6 +78,21 @@
                 vertical-align: middle;
                 
             }
+        }
+        .key.enter, .key.delete {
+            width: calc(calc($font-size * 2.5) - calc($font-size * 0.25));
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .key.enter {
+            background-image: url('../img/enter.svg');
+            background-size: 60%;
+        }
+        .key.delete {
+            background-image: url('../img/arrow.svg');
+            background-size: 42%;
+            border-color: black;
+            filter: invert(1);
         }
     }
 }
