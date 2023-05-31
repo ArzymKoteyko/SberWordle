@@ -162,7 +162,7 @@ const KeyboardCharacters = [
 ]
 
 type Props = {}
-type State = {goal, pointer, isWin, score}
+type State = {goal, pointer, isWin, isConfetti, score}
 export class Game extends React.Component<Props, State> {
     words
     absentCharacters: Array<String> = []
@@ -175,6 +175,7 @@ export class Game extends React.Component<Props, State> {
             goal: 'coder',
             pointer: 0,
             isWin: false,
+            isConfetti: false,
             score: 0,
         }
         this.words = Array.apply(null, {length: 6}).map(() => {return React.createRef()})
@@ -217,7 +218,7 @@ export class Game extends React.Component<Props, State> {
     componentDidMount(): void {
         this.words[0].current.enableInput();
         this.setState({
-            goal: wordsList[Math.floor(Math.random()*wordsList.length)]
+            goal: wordsList[Math.floor(Math.random()*wordsList.length)],
         })
     }
 
@@ -225,49 +226,96 @@ export class Game extends React.Component<Props, State> {
         let goal = this.state.goal;
         let lettersStates : Array<Number> = [] 
         let guessScore = 0
-        for (let i = 0; i < goal.length; i++) {
-            console.log(word[i].toUpperCase()); 
-            if (goal[i] == word[i]) {
-                lettersStates.push(Letter.INPLACE);
-                this.inplaceCharacters.push(word[i]);
-                this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorSuccessTransparent;
-                this.characters[word[i].toUpperCase()].current.style.borderColor = colorSuccess; 
-                guessScore += 100
+        if (Object.values(wordsList).includes(word)) {
+            for (let i = 0; i < goal.length; i++) {
+                console.log(word[i].toUpperCase()); 
+                if (goal[i] == word[i]) {
+                    lettersStates.push(Letter.INPLACE);
+                    this.inplaceCharacters.push(word[i]);
+                    this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorSuccessTransparent;
+                    this.characters[word[i].toUpperCase()].current.style.borderColor = colorSuccess; 
+                    guessScore += 100
+                }
+                else if (goal.includes(word[i])) {
+                    lettersStates.push(Letter.PRESENT);
+                    this.presentCharacters.push(word[i]);
+                    this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorWarningTransparent;
+                    this.characters[word[i].toUpperCase()].current.style.borderColor = colorWarning;
+                    guessScore += 25
+                }
+                else {
+                    lettersStates.push(Letter.ABSENT);
+                    this.absentCharacters.push(word[i]);
+                    this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorCriticalTransparent;
+                    this.characters[word[i].toUpperCase()].current.style.borderColor = colorCritical;
+                    guessScore += 5
+                }
             }
-            else if (goal.includes(word[i])) {
-                lettersStates.push(Letter.PRESENT);
-                this.presentCharacters.push(word[i]);
-                this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorWarningTransparent;
-                this.characters[word[i].toUpperCase()].current.style.borderColor = colorWarning;
-                guessScore += 25
+            
+            console.log(word);
+            console.log(lettersStates);
+            this.words[this.state.pointer].current.disableInput()
+            this.words[this.state.pointer].current.updateLetters(lettersStates)
+            if (word === goal) {
+                console.log('You win')
+                this.setState({ 
+                    isWin: true,
+                    isConfetti: true
+                })
+                setTimeout(() => {
+                    this.setState({ 
+                        isConfetti: false,
+                    })
+                }, 10000)
+                guessScore += 500
             }
             else {
-                lettersStates.push(Letter.ABSENT);
-                this.absentCharacters.push(word[i]);
-                this.characters[word[i].toUpperCase()].current.style.backgroundColor = colorCriticalTransparent;
-                this.characters[word[i].toUpperCase()].current.style.borderColor = colorCritical;
-                guessScore += 5
+                this.words[this.state.pointer+1].current.enableInput()
+                this.words[this.state.pointer+1].current.letters[0].current.focus()
+                this.setState({
+                    pointer: this.state.pointer+1,
+                })
             }
-        }
-        
-        console.log(word);
-        console.log(lettersStates);
-        this.words[this.state.pointer].current.disableInput()
-        this.words[this.state.pointer].current.updateLetters(lettersStates)
-        if (word === goal) {
-            console.log('You win')
-            guessScore += 500
+            
+            console.log(guessScore)
+            let prevScore = this.state.score
+            for (let i=0; i<guessScore; i++) {
+                setTimeout(() => {
+                    this.setState({ score: this.state.score + 1 });
+                }, i*15)
+            }
+            setTimeout(() => {
+                this.setState({ score: prevScore + guessScore });
+            }, guessScore*15);
         }
         else {
-            this.words[this.state.pointer+1].current.enableInput()
-            this.words[this.state.pointer+1].current.letters[0].current.focus()
-            this.setState({
-                pointer: this.state.pointer+1,
-            })
+            for (let letter of this.words[this.state.pointer].current.letters) {
+                letter.current.animate([
+                    {transform: 'translate3d(-1px, 0, 0)'},  // 1
+                    {transform: 'translate3d(2px, 0, 0)'},   // 2
+                    {transform: 'translate3d(-4px, 0, 0)'},  // 3
+                    {transform: 'translate3d(4px, 0, 0)'},   // 4
+                    {transform: 'translate3d(-4px, 0, 0)'},  // 3
+                    {transform: 'translate3d(4px, 0, 0)'},   // 4
+                    {transform: 'translate3d(-4px, 0, 0)'},  // 3
+                    {transform: 'translate3d(2px, 0, 0)'},   // 2
+                    {transform: 'translate3d(-1px, 0, 0)'},  // 1
+
+                    // 1 {transform: 'translate3d(-1px, 0, 0)'},
+                    // 2 {transform: 'translate3d(2px, 0, 0)'},
+                    // 3 {transform: 'translate3d(-4px, 0, 0)'},
+                    // 4 {transform: 'translate3d(4px, 0, 0)'}
+                ],
+                {
+                    duration: 500,
+                    iterations: 1
+                })
+            }
+            setTimeout(() => {
+                this.words[this.state.pointer].current.emptyWord()
+                this.words[this.state.pointer].current.letters[0].current.focus()    
+            }, 500)
         }
-        this.setState({ 
-            score: this.state.score + guessScore,
-        });
     }
 
     handleKeyClick = (key, event) => {
@@ -289,6 +337,7 @@ export class Game extends React.Component<Props, State> {
         this.setState({ 
             pointer: 0,
             goal: wordsList[Math.floor(Math.random()*wordsList.length)],
+            isWin: false
         })
         console.log('restart')
     }
@@ -296,8 +345,7 @@ export class Game extends React.Component<Props, State> {
     render(): React.ReactNode { return(<>
         <div className="Game">
             {(() => {
-                if (this.state.isWin) return <Confetti/>
-                else return <></>
+                if (this.state.isConfetti) return <Confetti numberOfPieces={400} recycle={false}/>
             })()}
             <div className="Menu">
                 <div className="restart" onClick={this.restart}></div>
