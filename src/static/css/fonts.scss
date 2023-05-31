@@ -5,6 +5,12 @@
     font-family: 'Roboto', sans-serif;
     color: white;
 }
+@media (orientation: landscape) {
+    :root {
+        --font-size: min(2.25vw, 2.25vh);
+    }
+}
+
 $font-size: var(--font-size );
 
 

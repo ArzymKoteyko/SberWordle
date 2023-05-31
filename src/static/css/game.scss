@@ -37,7 +37,7 @@
     }
     .Puzzle {
         input {
-            border: 3px solid white;
+            border: calc($font-size * 0.1) solid white;
             border-radius: calc($font-size * 0.25);
             margin: 0;
             padding: 0;
@@ -71,7 +71,7 @@
             display: flex;
             justify-content: center;
             align-items: center;    
-            border: 3px solid white;
+            border: calc($font-size * 0.1) solid white;
             border-radius: calc($font-size * 0.25);
             width: calc($font-size * 1.25);
             height: calc($font-size * 1.8);
