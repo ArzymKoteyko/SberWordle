@@ -180,6 +180,10 @@ class Word extends React.Component<WordProps, WordState> {
         this.updateWord()
     }
 
+    handleLetterFocus = (idx, event) => {
+        this.movePointerRight(idx - this.state.pointer)
+    }
+
     render(): React.ReactNode  { return(<div className="Word">
         <form>
             {this.letters.map((ref, idx) => {
@@ -188,6 +192,7 @@ class Word extends React.Component<WordProps, WordState> {
                     key={idx}
                     ref={ref}
                     onChange={this.handleLetterInput}
+                    onFocus={(event) => {this.handleLetterFocus(idx, event)}}
                 ></input>)
             })}
         </form>
