@@ -35,6 +35,7 @@ type WordState = {pointer, word}
 class Word extends React.Component<WordProps, WordState> {
     letters
     onGuess
+    notChanged = true
     constructor(props) {
         super(props)
         this.state = {
@@ -121,8 +122,23 @@ class Word extends React.Component<WordProps, WordState> {
             this.letters[this.state.pointer].current.value = letter.toLowerCase()
             this.letters[this.state.pointer].current.focus()
         }
-        else if (this.movePointerRight()) {
-            this.letters[this.state.pointer+1].current.value = letter.toLowerCase()
+        else if (this.letters[this.state.pointer+1]) {
+            if (this.letters[this.state.pointer+1].current.value !== '' && this.notChanged) {
+                this.letters[this.state.pointer].current.value = letter.toLowerCase()
+                this.letters[this.state.pointer].current.focus()
+                this.notChanged = false
+            }
+            else if (this.movePointerRight()) {
+                this.letters[this.state.pointer+1].current.value = letter.toLowerCase()
+                if (this.state.pointer == 5) {
+                    this.notChanged = true
+                }
+            }
+        }
+        else {
+            this.letters[this.state.pointer].current.value = letter.toLowerCase()
+            this.letters[this.state.pointer].current.focus()
+            this.notChanged = true
         }
         this.updateWord()
     }
@@ -163,10 +179,8 @@ class Word extends React.Component<WordProps, WordState> {
     }
 
     handleLetterInput = (event) => {
-        if (event.target.value.length == 0) {
-            this.movePointerLeft();
-        }
-        else if (event.target.value.length > 1) {
+        console.log(this.state.pointer)
+        if (event.target.value.length > 1) {
             if (this.movePointerRight(event.target.value.length-1)) {
                 for (let i = event.target.value.length-1; i > 0; i--) {
                     this.letters[this.state.pointer+i].current.value = event.target.value[i].toLowerCase()
@@ -174,13 +188,12 @@ class Word extends React.Component<WordProps, WordState> {
             }
             this.letters[this.state.pointer].current.value = event.target.value[0].toLowerCase()
         }
-        else {
-            this.letters[this.state.pointer].current.value = event.target.value[0].toLowerCase()
-        }
         this.updateWord()
     }
 
     handleLetterFocus = (idx, event) => {
+        console.log(this.state.pointer)
+        this.notChanged = true
         this.movePointerRight(idx - this.state.pointer)
     }
 
@@ -189,10 +202,11 @@ class Word extends React.Component<WordProps, WordState> {
             {this.letters.map((ref, idx) => {
                 return (
                 <input
+                    readOnly={true}
                     key={idx}
                     ref={ref}
                     onChange={this.handleLetterInput}
-                    onFocus={(event) => {this.handleLetterFocus(idx, event)}}
+                    onClick={(event) => {this.handleLetterFocus(idx, event)}}
                 ></input>)
             })}
         </form>
@@ -273,6 +287,9 @@ export class Game extends React.Component<Props, State> {
         addEventListener("keydown", (event) => {
             if (event.isComposing || event.code === 'Enter') {
                 this.words[this.state.pointer].current.enterWord()
+            }
+            else if (event.isComposing || event.code === 'Backspace') {
+                this.words[this.state.pointer].current.movePointerLeft()
             }
         })
     }
@@ -374,7 +391,6 @@ export class Game extends React.Component<Props, State> {
             isWin: false
         })
     }
-
     render(): React.ReactNode { return(<>
         <div className="Game">
             {(() => {

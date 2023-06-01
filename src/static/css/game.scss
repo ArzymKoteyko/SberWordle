@@ -60,6 +60,9 @@
             transition: all 0.5s ease-out;
             font-weight: 600;
         }
+        input:focus {
+            border-color: goldenrod;
+        }
     }
     .Keyboard {
         display: flex;
@@ -75,8 +78,8 @@
             align-items: center;    
             border: calc($font-size * 0.1) solid white;
             border-radius: calc($font-size * 0.25);
-            width: calc($font-size * 1.25);
-            height: calc($font-size * 2);
+            width: calc($font-size * 1.4);
+            height: calc($font-size * 2.3);
             margin: calc($font-size * 0.125);
             transition: all 0.5s ease-out;
             p {
