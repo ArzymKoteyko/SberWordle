@@ -2,18 +2,18 @@
 
 .Game {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
     flex-direction: column;
-    gap: calc($font-size * 2);
-    height: 80vh;
+    gap: calc($font-size * 1);
+    height: 100vh;
     width: 100vw;
     .Menu {
-        width: calc(100vw - calc($font-size * 2));
+        width: calc(100vw - calc($font-size * 2.2));
         display: flex;
         flex-direction: row-reverse;
         justify-content: space-between;
-        margin-top: $font-size;
+        margin-top: calc($font-size * 1.1);
         .restart {
             height: calc($font-size * 1.5);
             width: calc($font-size * 1.5);
@@ -23,27 +23,35 @@
             background-image:  url('../img/restart.png');
             filter: grayscale(1) invert(1);
         }
-    }
-    .Score {
-        width: calc(100vw - calc($font-size * 2));
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        h1 {
-            font-size: calc($font-size * 1.5);
-            font-weight: 300;
+        .score {
+            width: calc(100vw - calc($font-size * 2));
+            display: flex;
+            flex-direction: row;
+            gap: calc($font-size * 1);
+            justify-content: start;
+            align-items: center;
+            h2 {
+                font-size: calc($font-size * 2);
+                color: rgba(255,255,255,0.8);
+                font-weight: 200;
+            }
+            h1 {
+                font-size: calc($font-size * 2);
+                font-weight: 600;
+            }
         }
     }
+    
     .Puzzle {
+        
         input {
             border: calc($font-size * 0.1) solid white;
             border-radius: calc($font-size * 0.25);
             margin: 0;
             padding: 0;
             font-size: calc($font-size * 1.5);
-            width: calc($font-size * 1.74);
-            height: calc($font-size * 2.5);
+            width: calc($font-size * 3.6);
+            height: calc($font-size * 3.6);
             text-align: center;
             margin: calc($font-size * 0.125);
             caret-color: transparent;
@@ -56,7 +64,6 @@
     .Keyboard {
         display: flex;
         flex-direction: column;
-        margin-bottom: calc($font-size * 8);
         .key-row {
             display: flex;
             flex-direction: row;
@@ -69,7 +76,7 @@
             border: calc($font-size * 0.1) solid white;
             border-radius: calc($font-size * 0.25);
             width: calc($font-size * 1.25);
-            height: calc($font-size * 1.8);
+            height: calc($font-size * 2);
             margin: calc($font-size * 0.125);
             transition: all 0.5s ease-out;
             p {

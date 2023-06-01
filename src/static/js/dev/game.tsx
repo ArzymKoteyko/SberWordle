@@ -377,9 +377,10 @@ export class Game extends React.Component<Props, State> {
             })()}
             <div className="Menu">
                 <div className="restart" onClick={this.restart}></div>
-            </div>
-            <div className="Score">
-                <h1>{this.state.score}</h1>
+                <div className="score">
+                    <h2>Очки</h2>
+                    <h1>{this.state.score}</h1>
+                </div>
             </div>
             <div className="Puzzle">
                 {this.words.map((ref, idx) => {
